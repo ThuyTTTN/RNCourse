@@ -1,11 +1,20 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Button } from "react-native";
 import { useState } from "react";
 import GoalItem from "./components/GoalItem";
 import GoalInput from "./components/GoalInput";
 
 export default function App() {
   const [courseGoals, setCourseGoals] = useState([]);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+
+  const startAddGoalHandler = () => {
+    setModalIsVisible(true);
+  }
+
+  const endAddGoalHandler = () => {
+    setModalIsVisible(false);
+  }
 
   const addGoalHandler = (enteredGoalText) => {
     //best practice to update state; you're updating currentCourseGoals by appending the new course goals (enteredGoalText)
@@ -13,6 +22,7 @@ export default function App() {
       ...currentCourseGoals,
       { text: enteredGoalText, key: Math.random().toString() },
     ]);
+    endAddGoalHandler();
   };
 
   const deleteGoalHandler = (id) => {
@@ -25,7 +35,8 @@ export default function App() {
 
   return (
     <View style={styles.appContainer}>
-      <GoalInput onAddGoal={addGoalHandler} />
+      <Button title='Add New Goal' color="#5e0acc" onPress={startAddGoalHandler} />
+      {modalIsVisible && <GoalInput visible={modalIsVisible} onAddGoal={addGoalHandler} onCancel={endAddGoalHandler} />}
       <View style={styles.goalsContainer}>
         {/* use FlatList when you have dynamic data that is scrollable */}
         <FlatList
